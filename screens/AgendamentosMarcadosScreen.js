@@ -54,7 +54,7 @@ export default function AgendamentosMarcadosScreen({ navigation, agendamentos, s
     >
       <View style={styles.overlay}>
            {agendamentos.length === 0 ? (
-          <Text style={styles.noData}>Nenhum agendamento registrado.</Text>
+          <Text style={[styles.noData, { color: '#F5FCFF', fontSize: 25, fontWeight: 'bold'  }]}>Nenhum agendamento registrado </Text>
         ) : (
           <FlatList
             data={agendamentos}
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   alignItems: 'center',
   justifyContent: 'center',
   position: 'absolute',
-  top: 630,
+  top: 600,
   right: 130,
   zIndex: 10,
   shadowColor: 'red',

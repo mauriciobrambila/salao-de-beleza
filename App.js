@@ -12,7 +12,6 @@ const AGENDAMENTOS_KEY = '@agendamentos';
 export default function App() {
   const [agendamentos, setAgendamentos] = useState([]);
 
-  // Carregar agendamentos ao iniciar
   useEffect(() => {
     const loadAgendamentos = async () => {
       try {
@@ -28,7 +27,6 @@ export default function App() {
     loadAgendamentos();
   }, []);
 
-  // Salvar agendamentos sempre que mudarem
   useEffect(() => {
     const saveAgendamentos = async () => {
       try {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ImageBackground, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ImageBackground, StyleSheet,
+  Alert, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
@@ -30,7 +31,7 @@ export default function AgendamentoScreen({ navigation, setAgendamentos, agendam
       Alert.alert('Erro', 'Preencha todos os campos!');
       return;
     }
-      const novoAgendamento = {
+    const novoAgendamento = {
       id: editId || uuidv4(),
       nome,
       tipo,
@@ -40,13 +41,11 @@ export default function AgendamentoScreen({ navigation, setAgendamentos, agendam
     };
 
     if (editId) {
-      // Modo edição
-      setAgendamentos(prev => 
-        prev.map(item => item.id === editId ? novoAgendamento : item)
+      setAgendamentos(prev =>
+        prev.map(item => (item.id === editId ? novoAgendamento : item))
       );
       Alert.alert('Sucesso', 'Agendamento atualizado!');
     } else {
-      // Novo agendamento
       setAgendamentos(prev => [...prev, novoAgendamento]);
       Alert.alert('Sucesso', 'Agendado com sucesso!');
     }
@@ -60,97 +59,111 @@ export default function AgendamentoScreen({ navigation, setAgendamentos, agendam
       style={styles.container}
       blurRadius={2}
     >
-      <View style={styles.overlay}>
-      <Text style={styles.title}>
-          {editId ? 'Editar Agendamento' : ''}
-        </Text>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.overlay}>
+            <Text style={styles.title}>
+              {editId ? 'Editar Agendamento' : ''}
+            </Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Nome do Cliente"
-          placeholderTextColor="#aaa"
-          value={nome}
-          onChangeText={setNome}
-        />
+            <TextInput
+              style={styles.input}
+              placeholder="Nome do Cliente"
+              placeholderTextColor="#aaa"
+              value={nome}
+              onChangeText={setNome}
+            />
 
-<View style={styles.pickerContainer}>
-  <Picker
-    selectedValue={tipo}
-    style={styles.picker}
-    dropdownIconColor="brown"
-    onValueChange={(itemValue) => setTipo(itemValue)}
-  >
-    <Picker.Item 
-      label="Selecione um serviço" 
-      value="" 
-      style={styles.pickerPlaceholder}
-      enabled={false} 
-    />
-    {[
-      "Corte de Cabelo Masculino",
-      "Corte de Cabelo Feminino",
-      "Pintura de Cabelo",
-      "Hidratação Facial",
-      "Limpeza de Pele",
-      "Sobrancelha",
-      "Maquiagem",
-      "Massagem",
-      "Esfoliação",
-      "Depilação",
-      "Escova",
-      "Barba",
-      "Mão",
-      "Pé"
-    ].map((servico) => (
-      <Picker.Item 
-        key={servico} 
-        label={servico} 
-        value={servico} 
-        style={styles.pickerItem}
-      />
-    ))}
-  </Picker>
-</View>
-        <MaskedTextInput
-          style={styles.input}
-          mask="99/99/9999"
-          placeholder="Data (DD/MM/AAAA)"
-          placeholderTextColor="#aaa"
-          keyboardType="numeric"
-          value={data}
-          onChangeText={(text, rawText) => setData(text)}
-        />
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={tipo}
+                style={styles.picker}
+                dropdownIconColor="brown"
+                onValueChange={(itemValue) => setTipo(itemValue)}
+              >
+                <Picker.Item
+                  label="Selecione um serviço"
+                  value=""
+                  style={styles.pickerPlaceholder}
+                  enabled={false}
+                />
+                {[
+                  "Corte de Cabelo Masculino",
+                  "Corte de Cabelo Feminino",
+                  "Pintura de Cabelo",
+                  "Hidratação Facial",
+                  "Limpeza de Pele",
+                  "Sobrancelha",
+                  "Maquiagem",
+                  "Massagem",
+                  "Esfoliação",
+                  "Depilação",
+                  "Escova",
+                  "Barba",
+                  "Mão",
+                  "Pé"
+                ].map((servico) => (
+                  <Picker.Item
+                    key={servico}
+                    label={servico}
+                    value={servico}
+                    style={styles.pickerItem}
+                  />
+                ))}
+              </Picker>
+            </View>
 
-        <MaskedTextInput
-          style={styles.input}
-          mask="99:99"
-          placeholder="Hora (HH:MM)"
-          placeholderTextColor="#aaa"
-          keyboardType="numeric"
-          value={hora}
-          onChangeText={(text, rawText) => setHora(text)}
-        />
+            <MaskedTextInput
+              style={styles.input}
+              mask="99/99/9999"
+              placeholder="Data (DD/MM/AAAA)"
+              placeholderTextColor="#aaa"
+              keyboardType="numeric"
+              value={data}
+              onChangeText={(text) => setData(text)}
+            />
 
-          <MaskedTextInput
-          style={styles.input}
-          mask="(99) 99999-9999"
-          placeholder="Fone (00) 00000-0000"
-          placeholderTextColor="#aaa"
-          keyboardType="phone-pad"
-          value={fone}
-          onChangeText={setFone}
-        />
+            <MaskedTextInput
+              style={styles.input}
+              mask="99:99"
+              placeholder="Hora (HH:MM)"
+              placeholderTextColor="#aaa"
+              keyboardType="numeric"
+              value={hora}
+              onChangeText={(text) => setHora(text)}
+            />
 
-        <TouchableOpacity style={styles.button} onPress={handleAgendar}>
-        <Text style={styles.buttonText}>
-            {editId ? 'Salvar Alterações' : 'Agendar'}
-          </Text>
-        </TouchableOpacity>
+            <MaskedTextInput
+              style={styles.input}
+              mask="(99) 99999-9999"
+              placeholder="Fone (00) 00000-0000"
+              placeholderTextColor="#aaa"
+              keyboardType="phone-pad"
+              value={fone}
+              onChangeText={setFone}
+            />
 
-        <TouchableOpacity style={[styles.button, styles.cancelar]} onPress={() => navigation.goBack()}>
-          <Text style={styles.buttonText}>Cancelar</Text>
-        </TouchableOpacity>
-      </View>
+            <TouchableOpacity style={styles.button} onPress={handleAgendar}>
+              <Text style={styles.buttonText}>
+                {editId ? 'Salvar Alterações' : 'Agendar'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.button, styles.cancelar]}
+              onPress={() => navigation.goBack()}
+            >
+              <Text style={styles.buttonText}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </ImageBackground>
   );
 }
@@ -183,10 +196,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     fontSize: 16,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 4,
@@ -200,10 +210,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 5,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 6,
@@ -218,32 +225,32 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 3.2,
   },
-    pickerContainer: {
-      backgroundColor: '#fff',
-      borderRadius: 15,
-      marginBottom: 14,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.2,
-      shadowRadius: 5,
-      elevation: 5,
-      borderWidth: 5,
-      borderColor: 'green',
-      overflow: 'hidden', // Importante para iOS
-    },
-    picker: {
-      height: 65,
-      width: '90%',
-      color: '#333',
-    },
-    pickerItem: {
-      fontSize: 16,
-      color: '#333',
-      backgroundColor: '#fff',
-    },
-    pickerPlaceholder: {
-      fontSize: 18,
-      color: '#999',
-      fontStyle: 'italic',
-    },
-  });
+  pickerContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    marginBottom: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+    borderWidth: 5,
+    borderColor: 'green',
+    overflow: 'hidden',
+  },
+  picker: {
+    height: 65,
+    width: '90%',
+    color: '#333',
+  },
+  pickerItem: {
+    fontSize: 16,
+    color: '#333',
+    backgroundColor: '#fff',
+  },
+  pickerPlaceholder: {
+    fontSize: 18,
+    color: '#999',
+    fontStyle: 'italic',
+  },
+});
